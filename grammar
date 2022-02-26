@@ -1,10 +1,6 @@
-plus +
-minus -
-mul *
-div /
-mod mod
-brace { }
-str "
+op + - / * mod
+ostr ."
+cstr "
 dot .
 if if
 else else

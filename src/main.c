@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "../slap/src/token.h"
 #include "../slap/src/gram.h"
+#include "forth.h"
 
 #define MAXRULES 64
 
@@ -53,6 +54,22 @@ int main(int argc, char **argv)
         }
         printf("{ %s:%s }\n", current.type, current.value);
     }
+
+    stackptr = -1;
+
+    for (int i = 0; i < tcount; i++)
+    {
+        printf("Step:");
+        getc(stdin);
+        puts("");
+        executeToken(tokens[i]);
+        for (int i = 0; i < stackptr + 8; i++)
+        {
+            printf("Value on stack pointer at %d is %d\n", i, stack[i]);
+        }
+    }
+
+    
 
     fclose(grammar);
     fclose(code);

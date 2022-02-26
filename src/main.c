@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "token.h"
-#include "gram.h"
+#include "../slap/src/token.h"
+#include "../slap/src/gram.h"
 
 #define MAXRULES 64
 

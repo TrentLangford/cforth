@@ -1,18 +1,18 @@
-plus : +
-minus : -
-mul : *
-div : /
-mod : mod
-brace : { }
-str : "
-dot : .
-if : if
-else : else
-then : then
-emit : emit
-dup : dup
-num : {num}
-do : do
-loop : loop
-default : {def}
+plus +
+minus -
+mul *
+div /
+mod mod
+brace { }
+str "
+dot .
+if if
+else else
+then then
+emit emit
+dup dup
+do do
+loop loop
+num {num}
+default {def}
 end

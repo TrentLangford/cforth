@@ -1,0 +1,3 @@
+[submodule "slap"]
+	path = slap
+	url = https://github.com/TrentLangford/slap.git

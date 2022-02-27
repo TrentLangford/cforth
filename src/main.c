@@ -60,15 +60,19 @@ int main(int argc, char **argv)
 
     for (int i = 0; i < tcount; i++)
     {
-        // printf("Step:");
-        // getc(stdin);
-        // puts("");
-        // printf("Token {%s:%s}\n", tokens[i].type, tokens[i].value);
+        
+        printf("Token {%s:%s}\n", tokens[i].type, tokens[i].value);
+        if (state == DEF)
+        {
+            printf("Step:");
+            getc(stdin);
+            system("clear");
+        }
         executeToken(tokens[i]);
-        // for (int i = 0; i < stackptr + 8; i++)
-        // {
-        //     printf("Value on stack pointer at %d is %d\n", i, stack[i]);
-        // }
+        for (int i = 0; i < stackptr + 8; i++)
+        {
+            if (state == DEF) printf("Value on stack pointer at %d is %d\n", i, stack[i]);
+        }
     }
 
     

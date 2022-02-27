@@ -33,8 +33,6 @@ typedef struct word
 
 int wordidx;
 word words[MAXWORDS];
-word w;
-int initialized;
 int finished;
 
 void pushInt(int val);

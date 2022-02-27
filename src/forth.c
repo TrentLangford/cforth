@@ -3,17 +3,17 @@
 void pushInt(int val)
 {
     stackptr++;
-    // printf("Pushing value onto stack: %d (ptr %d)\n", val, stackptr);
+    printf("Pushing value onto stack: %d (ptr %d)\n", val, stackptr);
     stack[stackptr] = val;
-    // printf("Stack at ptr %d is now %d\n", stackptr, stack[stackptr]);
+    printf("Stack at ptr %d is now %d\n", stackptr, stack[stackptr]);
 }
 
 int popInt()
 {
-    // printf("Popping value %d off of stack\n", stack[stackptr]);
+    printf("Popping value %d off of stack\n", stack[stackptr]);
     int res = stack[stackptr];
     stack[stackptr] = 0;
-    // printf("Stack at ptr %d is now %d\n", stackptr, stack[stackptr]);
+    printf("Stack at ptr %d is now %d\n", stackptr, stack[stackptr]);
     stackptr--;
     return res;
 }
@@ -56,11 +56,11 @@ void executeToken(token current)
         {
             for (int i = 0; i < wordidx; i++)
             {
-
-                printf("compare %s to %s (i:%d) results %d\n", current.value, words[i].name, i, strcmp(current.value, words[i].name));
+                // printf("token is %s(%s), word[%d] is %s\n", current.type, current.value, i, words[i].name);
+                // printf("compare %s to %s (i:%d) results %d\n", current.value, words[i].name, i, strcmp(current.value, words[i].name));
                 if (strcmp(current.value, words[i].name) == 0)
                 {
-                    printf("Found defined word %s\n", words[i].name);
+                    // printf("Found defined word %s\n", words[i].name);
                     for (int x = 0; x < words[i].defcount; x++)
                     {
                         printf("executing %s(%s)\n", words[i].def[x].type, words[i].def[x].value);
@@ -72,49 +72,35 @@ void executeToken(token current)
     }
     else if (state == WORD)
     {
-        if (!initialized) // Static word w doesn't exist, this is our first time defining a word
-        {
-            w.name = NULL;
-            w.def = NULL;
-            w.defcount = 0;
-            initialized = 1;
-        }
         if (!finished) // w exists but we aren't finished
         {
-            if (w.name == NULL) // This is the first pass
+            if (words[wordidx].name == NULL) // This is the first pass
             {
-                w.name = malloc(sizeof(char) * strlen(current.value));
-                strcpy(w.name, current.value);
+                words[wordidx].name = malloc(sizeof(char) * strlen(current.value));
+                strcpy(words[wordidx].name, current.value);
 
-                w.def = malloc(sizeof(token) * DEFWTOKENS);
-                w.defcount = 0;
-                printf("Defined new word %s\n", w.name);
+                words[wordidx].def = malloc(sizeof(token) * DEFWTOKENS);
+                words[wordidx].defcount = 0;
+                //printf("Defined new word %s\n", words[wordidx].name);
             }
             else    // We already gave the word a name, so add the token to the list 
             {
                 if (strcmp(current.type, "semcolon") == 0) // Don't add this to the list, just finish the word up
                 {
-                    words[wordidx++] = w;
-                    free(w.name);
-                    free(w.def);
-                    w.name = NULL;
-                    w.def = NULL;
-                    w.defcount = 0;
+                    wordidx++;
+                    //printf("words list wordidx(%d): %s\n", wordidx - 1, words[wordidx - 1].name);
                     finished = 1;
                     state = DEF;
                 }
                 else // Add the token to the word
                 {
-                    printf("Added token to %s: %s(%s)\n", w.name, current.type, current.value);
-                    w.def[w.defcount].type = malloc(sizeof(char) * strlen(current.type));
-                    strcpy(w.def[w.defcount].type, current.type);
-                    w.def[w.defcount].value = malloc(sizeof(char) * strlen(current.value));
-                    strcpy(w.def[w.defcount].value, current.value);
-                    printf("Resulting word now has %s(%s)\n", w.def[w.defcount].type, w.def[w.defcount].value);
-                    w.defcount++;
-                    words[wordidx] = w;
-                    wordidx++;
-                    printf("words list wordidx(%d): %s\n", wordidx - 1, words[wordidx - 1].name);
+                    //printf("Added token to %s: %s(%s)\n", words[wordidx].name, current.type, current.value);
+                    words[wordidx].def[words[wordidx].defcount].type = malloc(sizeof(char) * strlen(current.type));
+                    strcpy(words[wordidx].def[words[wordidx].defcount].type, current.type);
+                    words[wordidx].def[words[wordidx].defcount].value = malloc(sizeof(char) * strlen(current.value));
+                    strcpy(words[wordidx].def[words[wordidx].defcount].value, current.value);
+                    //printf("Resulting word now has %s(%s)\n", words[wordidx].def[words[wordidx].defcount].type, words[wordidx].def[words[wordidx].defcount].value);
+                    words[wordidx].defcount++;
                 }
             }
         }

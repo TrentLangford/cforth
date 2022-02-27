@@ -6,6 +6,8 @@
 #include "stdlib.h"
 
 #define STACKSIZE 1024
+#define MAXWORDS 1024
+#define DEFWTOKENS 64
 
 int stack[STACKSIZE];
 int stackptr;
@@ -23,9 +25,16 @@ State state;
 
 typedef struct word
 {
+    char *name;
     token *def;
     int defcount;
 } word;
+
+int wordidx;
+word words[MAXWORDS];
+word w;
+int initialized;
+int finished;
 
 void pushInt(int val);
 int popInt();

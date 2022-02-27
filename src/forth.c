@@ -45,6 +45,7 @@ void executeToken(token current)
         else if (strcmp(current.type, "colon") == 0)
         {
             state = WORD;
+            finished = 0;
         }
         else if (strcmp(current.type, "str") == 0)
         {
@@ -54,9 +55,43 @@ void executeToken(token current)
     }
     else if (state == WORD)
     {
-        if (strcmp(current.type, "semcolon") == 0 && state == WORD)
+        if (!initialized) // Static word w doesn't exist, this is our first time defining a word
         {
-            state = DEF;
+            w.name = NULL;
+            w.def = NULL;
+            w.defcount = 0;
+            initialized = 1;
+        }
+        if (!finished) // w exists but we aren't finished
+        {
+            if (w.name == NULL) // This is the first pass
+            {
+                w.name = malloc(sizeof(char) * strlen(current.value));
+                strcpy(w.name, current.value);
+
+                w.def = malloc(sizeof(token) * DEFWTOKENS);
+                w.defcount = 0;
+                printf("Defined new word %s\n", w.name);
+            }
+            else    // We already gave the word a name, so add the token to the list 
+            {
+                if (strcmp(current.type, "semcolon") == 0) // Don't add this to the list, just finish the word up
+                {
+                    words[wordidx++] = w;
+                    free(w.name);
+                    free(w.def);
+                    w.name = NULL;
+                    w.def = NULL;
+                    w.defcount = 0;
+                    finished = 1;
+                    state = DEF;
+                }
+                else // Add the token to the word
+                {
+                    printf("Added token to %s: %s(%s)\n", w.name, current.type, current.value);
+                    w.def[w.defcount++] = current;
+                }
+            }
         }
     }
     else if (state == STR)

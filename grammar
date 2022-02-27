@@ -1,7 +1,8 @@
 op + - / * mod
-ostr ."
-cstr "
+str ."
 dot .
+colon :
+semcolon ;
 if if
 else else
 then then

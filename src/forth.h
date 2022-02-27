@@ -7,11 +7,25 @@
 
 #define STACKSIZE 1024
 
-#ifndef STACK
-#define STACK
 int stack[STACKSIZE];
 int stackptr;
-#endif
+
+typedef enum State
+{
+    DEF,
+    WORD,
+    IF,
+    LOOP,
+    STR
+} State;
+
+State state;
+
+typedef struct word
+{
+    token *def;
+    int defcount;
+} word;
 
 void pushInt(int val);
 int popInt();

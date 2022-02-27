@@ -22,23 +22,55 @@ int popInt()
 // TODO: find a way to enumerate program state
 void executeToken(token current)
 {
-    if (strcmp(current.type, "num") == 0)
+    if (state == DEF)
     {
-        pushInt(atoi(current.value));
+        if (strcmp(current.type, "num") == 0)
+        {
+            pushInt(atoi(current.value));
+        }
+        else if (strcmp(current.type, "op") == 0)
+        {
+            int right = popInt();
+            int left = popInt();
+            if (strcmp(current.value, "+") == 0) pushInt(left + right);
+            else if (strcmp(current.value, "-") == 0) pushInt(left - right);
+            else if (strcmp(current.value, "*") == 0) pushInt(left * right);
+            else if (strcmp(current.value, "/") == 0) pushInt(left / right);
+            else if (strcmp(current.value, "mod") == 0) pushInt(left % right);
+        }
+        else if (strcmp(current.type, "dot") == 0)
+        {
+            printf("cforth: %d\n", popInt());
+        }
+        else if (strcmp(current.type, "colon") == 0)
+        {
+            state = WORD;
+        }
+        else if (strcmp(current.type, "str") == 0)
+        {
+            state = STR;
+            printf("cforth: ");
+        }
     }
-    else if (strcmp(current.type, "op") == 0)
+    else if (state == WORD)
     {
-        puts("Operator detected");
-        int right = popInt();
-        int left = popInt();
-        if (strcmp(current.value, "+") == 0) pushInt(left + right);
-        else if (strcmp(current.value, "-") == 0) pushInt(left - right);
-        else if (strcmp(current.value, "*") == 0) pushInt(left * right);
-        else if (strcmp(current.value, "/") == 0) pushInt(left / right);
-        else if (strcmp(current.value, "mod") == 0) pushInt(left % right);
+        if (strcmp(current.type, "semcolon") == 0 && state == WORD)
+        {
+            state = DEF;
+        }
     }
-    else if (strcmp(current.type, "dot") == 0)
+    else if (state == STR)
     {
-        printf("cforth: %d\n", popInt());
+        char *to_print = malloc(sizeof(char) * strlen(current.value)); // So that we can modify it without mutating the original string
+        strcpy(to_print, current.value);
+        int offset = strcspn(to_print, "\"");
+        if (offset < strlen(to_print))
+        {
+            to_print[offset] = '\n';
+            state = DEF;
+        }
+        else to_print[offset] = ' ';
+        printf("%s", to_print);
+        free(to_print);
     }
 }

@@ -56,17 +56,19 @@ int main(int argc, char **argv)
     }
 
     stackptr = -1;
+    state = DEF;
 
     for (int i = 0; i < tcount; i++)
     {
-        printf("Step:");
-        getc(stdin);
-        puts("");
+        // printf("Step:");
+        // getc(stdin);
+        // puts("");
+        // printf("Token {%s:%s}\n", tokens[i].type, tokens[i].value);
         executeToken(tokens[i]);
-        for (int i = 0; i < stackptr + 8; i++)
-        {
-            printf("Value on stack pointer at %d is %d\n", i, stack[i]);
-        }
+        // for (int i = 0; i < stackptr + 8; i++)
+        // {
+        //     printf("Value on stack pointer at %d is %d\n", i, stack[i]);
+        // }
     }
 
     

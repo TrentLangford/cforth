@@ -3,17 +3,17 @@
 void pushInt(int val)
 {
     stackptr++;
-    printf("Pushing value onto stack: %d (ptr %d)\n", val, stackptr);
+    // printf("Pushing value onto stack: %d (ptr %d)\n", val, stackptr);
     stack[stackptr] = val;
-    printf("Stack at ptr %d is now %d\n", stackptr, stack[stackptr]);
+    // printf("Stack at ptr %d is now %d\n", stackptr, stack[stackptr]);
 }
 
 int popInt()
 {
-    printf("Popping value %d off of stack\n", stack[stackptr]);
+    // printf("Popping value %d off of stack\n", stack[stackptr]);
     int res = stack[stackptr];
     stack[stackptr] = 0;
-    printf("Stack at ptr %d is now %d\n", stackptr, stack[stackptr]);
+    // printf("Stack at ptr %d is now %d\n", stackptr, stack[stackptr]);
     stackptr--;
     return res;
 }
@@ -50,6 +50,7 @@ void executeToken(token current)
         else if (strcmp(current.type, "str") == 0)
         {
             state = STR;
+            // printf("String set state to %d\n", state);
             printf("cforth: ");
         }
         else if (strcmp(current.type, "default") == 0)
@@ -60,12 +61,36 @@ void executeToken(token current)
                 // printf("compare %s to %s (i:%d) results %d\n", current.value, words[i].name, i, strcmp(current.value, words[i].name));
                 if (strcmp(current.value, words[i].name) == 0)
                 {
+                    
                     // printf("Found defined word %s\n", words[i].name);
                     for (int x = 0; x < words[i].defcount; x++)
-                    {
-                        printf("executing %s(%s)\n", words[i].def[x].type, words[i].def[x].value);
+                    {   
+                        if (state == DEF) state = EXEC; // Only switch states if we are in default state (i.e. retain if/else/loop/str states)
+                        // printf("executing %s(%s), state %d\n", words[i].def[x].type, words[i].def[x].value, state);
                         executeToken(words[i].def[x]);  // Sorta recursive..?
+                        if (state == EXEC) state = DEF; // Only switch back if the word didn't modify the state
                     }
+                    
+                }
+            }
+        }
+
+        if (state == EXEC)
+        {
+            // puts("Exec state");
+            // printf("compare %s to if returns %d\n", current.value, strcmp(current.value, "if"));
+            if (strcmp(current.value, "if") == 0)
+            {
+                // puts("Encountered if statement\n");
+                if (popInt() != 0)
+                {
+                    // puts("Going into if statement");
+                    state = IF;
+                }
+                else
+                {
+                    // puts("Skipping until else");
+                    state = SKIP;
                 }
             }
         }
@@ -118,5 +143,45 @@ void executeToken(token current)
         else to_print[offset] = ' ';
         printf("%s", to_print);
         free(to_print);
+    }
+    else if (state == IF)   // Encountered an if token while executing a word and executing up until else clause
+    {
+        if (strcmp(current.value, "else") != 0)
+        {
+            // printf("Current token %s(%s) isn't else and cond is true\n", current.type, current.value);
+            if (state == IF || state == DEF) state = EXEC;
+            // printf("State is now %d\n", state);
+            executeToken(current);
+            if (state == DEF || state == EXEC) state = IF;
+            // printf("State is now %d\n", state);
+        }
+        else
+        {
+            state = SKIP;
+        }
+    }
+    else if (state == SKIP)
+    {
+        if (strcmp(current.value, "then") == 0)
+        {
+            state = EXEC;
+        }
+        else if (strcmp(current.value, "else") == 0)
+        {
+            state = ELSE;
+        }
+    }
+    else if (state == ELSE)
+    {
+        if (strcmp(current.value, "then") != 0)
+        {
+            if (state == ELSE || state == DEF) state = EXEC;
+            executeToken(current);
+            if (state == DEF || state == EXEC) state = ELSE;
+        }
+        else
+        {
+            state = EXEC;
+        }
     }
 }

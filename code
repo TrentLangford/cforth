@@ -1,5 +1,4 @@
-2 3 mod .
-: ignore-this 2 + ;
-: implement-this ignore-this ;
-15
-implement-this
+: add-two-if-true if 2 + else then ;
+
+0
+add-two-if-true .

@@ -18,6 +18,8 @@ typedef enum State
     WORD,
     EXEC,
     IF,
+    SKIP,
+    ELSE,
     LOOP,
     STR
 } State;

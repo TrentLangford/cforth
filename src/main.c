@@ -52,7 +52,7 @@ int main(int argc, char **argv)
             token *tokens = realloc(tokens, tsize * 2);
             tsize *= 2;
         }
-        printf("{ %s:%s }\n", current.type, current.value);
+        //printf("{ %s:%s }\n", current.type, current.value);
     }
 
     stackptr = -1;

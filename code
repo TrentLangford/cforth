@@ -2,3 +2,5 @@
 : ignore-this 2 + ;
 : implement-this 2 + ;
 ." I am printing a block of text, this is fine and dandy 2 2 +"
+
+ignore-this

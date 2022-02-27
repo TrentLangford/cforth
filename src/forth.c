@@ -3,17 +3,17 @@
 void pushInt(int val)
 {
     stackptr++;
-    printf("Pushing value onto stack: %d (ptr %d)\n", val, stackptr);
+    // printf("Pushing value onto stack: %d (ptr %d)\n", val, stackptr);
     stack[stackptr] = val;
-    printf("Stack at ptr %d is now %d\n", stackptr, stack[stackptr]);
+    // printf("Stack at ptr %d is now %d\n", stackptr, stack[stackptr]);
 }
 
 int popInt()
 {
-    printf("Popping value %d off of stack\n", stack[stackptr]);
+    // printf("Popping value %d off of stack\n", stack[stackptr]);
     int res = stack[stackptr];
     stack[stackptr] = 0;
-    printf("Stack at ptr %d is now %d\n", stackptr, stack[stackptr]);
+    // printf("Stack at ptr %d is now %d\n", stackptr, stack[stackptr]);
     stackptr--;
     return res;
 }
@@ -22,7 +22,7 @@ int popInt()
 // TODO: find a way to enumerate program state
 void executeToken(token current)
 {
-    if (state == DEF)
+    if (state == DEF || state == EXEC)
     {
         if (strcmp(current.type, "num") == 0)
         {
@@ -51,6 +51,23 @@ void executeToken(token current)
         {
             state = STR;
             printf("cforth: ");
+        }
+        else if (strcmp(current.type, "default") == 0)
+        {
+            for (int i = 0; i < wordidx; i++)
+            {
+
+                printf("compare %s to %s (i:%d) results %d\n", current.value, words[i].name, i, strcmp(current.value, words[i].name));
+                if (strcmp(current.value, words[i].name) == 0)
+                {
+                    printf("Found defined word %s\n", words[i].name);
+                    for (int x = 0; x < words[i].defcount; x++)
+                    {
+                        printf("executing %s(%s)\n", words[i].def[x].type, words[i].def[x].value);
+                        executeToken(words[i].def[x]);  // Sorta recursive..?
+                    }
+                }
+            }
         }
     }
     else if (state == WORD)
@@ -89,7 +106,15 @@ void executeToken(token current)
                 else // Add the token to the word
                 {
                     printf("Added token to %s: %s(%s)\n", w.name, current.type, current.value);
-                    w.def[w.defcount++] = current;
+                    w.def[w.defcount].type = malloc(sizeof(char) * strlen(current.type));
+                    strcpy(w.def[w.defcount].type, current.type);
+                    w.def[w.defcount].value = malloc(sizeof(char) * strlen(current.value));
+                    strcpy(w.def[w.defcount].value, current.value);
+                    printf("Resulting word now has %s(%s)\n", w.def[w.defcount].type, w.def[w.defcount].value);
+                    w.defcount++;
+                    words[wordidx] = w;
+                    wordidx++;
+                    printf("words list wordidx(%d): %s\n", wordidx - 1, words[wordidx - 1].name);
                 }
             }
         }

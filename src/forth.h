@@ -16,6 +16,7 @@ typedef enum State
 {
     DEF,
     WORD,
+    EXEC,
     IF,
     LOOP,
     STR

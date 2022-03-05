@@ -10,6 +10,7 @@ _emit emit
 _dup dup
 _do do
 _loop loop
+_drop drop
 _num {num}
 _default {def}
 end

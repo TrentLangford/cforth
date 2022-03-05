@@ -40,7 +40,7 @@ void executeToken(token current)
         }
         else if (strcmp(current.type, "_dot") == 0)
         {
-            printf("cforth: %d\n", popInt());
+            printf("%d\n", popInt());
         }
         else if (strcmp(current.type, "_colon") == 0)
         {
@@ -51,11 +51,18 @@ void executeToken(token current)
         {
             state = STR;
             // printf("String set state to %d\n", state);
-            printf("cforth: ");
         }
         else if (strcmp(current.type, "_dup") == 0)
         {
             pushInt(stack[stackptr]);
+        }
+        else if (strcmp(current.type, "_emit") == 0)
+        {
+            printf("%c", (char)popInt());
+        }
+        else if (strcmp(current.type, "_drop") == 0)
+        {
+            popInt();
         }
         else if (strcmp(current.type, "_default") == 0)
         {
@@ -83,7 +90,7 @@ void executeToken(token current)
         {
             // puts("Exec state");
             // printf("compare %s to if returns %d\n", current.value, strcmp(current.value, "if"));
-            if (strcmp(current.value, "_if") == 0)
+            if (strcmp(current.type, "_if") == 0)
             {
                 // puts("Encountered if statement\n");
                 if (stack[stackptr] != 0)
@@ -96,6 +103,12 @@ void executeToken(token current)
                     // puts("Skipping until else");
                     state = SKIP;
                 }
+            }
+            else if (strcmp(current.type, "_do") == 0)
+            {
+                loopidx = popInt();
+                looplim = popInt();
+                state = LOOP;
             }
         }
     }
@@ -186,6 +199,46 @@ void executeToken(token current)
         else
         {
             state = EXEC;
+        }
+    }
+    else if (state == LOOP)
+    {
+        if (space <= looptokcount)
+        {
+            looptokens = realloc(looptokens, sizeof(token) * space + 16);
+            space += 16;
+        }
+        if (!looptokensfull && strcmp(current.type, "_loop") != 0)
+        {
+            looptokens[looptokcount].type = malloc(sizeof(char) * strlen(current.type));
+            strcpy(looptokens[looptokcount].type, current.type);
+            looptokens[looptokcount].value = malloc(sizeof(char) * strlen(current.value));
+            strcpy(looptokens[looptokcount].value, current.value);
+            looptokcount++;
+        }
+        else
+        {
+            looptokensfull = 1;
+        }
+
+        if (looptokensfull)
+        {
+            for (loopidx = 0; loopidx < looplim; loopidx++)
+            {
+                for (int i = 0; i < looptokcount; i++)
+                {
+                    if (strcmp(looptokens[i].value, "I") == 0 && strcmp(looptokens[i].type, "_default") == 0 && state != STR)
+                    {
+                        pushInt(loopidx);
+                    }
+                    else
+                    {
+                        if (state == LOOP || state == DEF) state = EXEC;
+                        executeToken(looptokens[i]);
+                        if (state == DEF || state == EXEC) state = LOOP;
+                    }
+                }
+            }
         }
     }
 }

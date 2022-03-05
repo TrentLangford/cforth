@@ -41,4 +41,11 @@ void pushInt(int val);
 int popInt();
 void executeToken(token current);
 
+token *looptokens;
+int looptokensfull;
+int looptokcount;
+int space;
+int loopidx;
+int looplim;
+
 #endif // __FORTH_H_

@@ -1,0 +1,4 @@
+: multiplications 10 emit 11 1  do  dup I * .  loop  drop ;
+
+7
+multiplications

@@ -54,6 +54,10 @@ int main(int argc, char **argv)
 
     stackptr = -1;
     state = DEF;
+    looptokcount = 0;
+    space = 16;
+    looptokens = malloc(sizeof(token) * space);
+    looptokensfull = 0;
 
     for (int i = 0; i < tcount; i++)
     {

@@ -1,4 +1,0 @@
-: add-two-if-true if 2 + else then ;
-
-0
-add-two-if-true .

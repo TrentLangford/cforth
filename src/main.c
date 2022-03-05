@@ -5,9 +5,6 @@
 
 #define MAXRULES 64
 
-// TODO: implement stack structure
-// TODO: read every token line by line
-// TODO: Figure out how the interpreter is going to interpret the tokens
 
 int main(int argc, char **argv)
 {

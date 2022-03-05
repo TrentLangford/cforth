@@ -1,15 +1,15 @@
-op + - / * mod
-str ."
-dot .
-colon :
-semcolon ;
-if if
-else else
-then then
-emit emit
-dup dup
-do do
-loop loop
-num {num}
-default {def}
+_op + - / * mod
+_str ."
+_dot .
+_colon :
+_semcolon ;
+_if if
+_else else
+_then then
+_emit emit
+_dup dup
+_do do
+_loop loop
+_num {num}
+_default {def}
 end

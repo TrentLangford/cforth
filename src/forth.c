@@ -24,11 +24,11 @@ void executeToken(token current)
 {
     if (state == DEF || state == EXEC)
     {
-        if (strcmp(current.type, "num") == 0)
+        if (strcmp(current.type, "_num") == 0)
         {
             pushInt(atoi(current.value));
         }
-        else if (strcmp(current.type, "op") == 0)
+        else if (strcmp(current.type, "_op") == 0)
         {
             int right = popInt();
             int left = popInt();
@@ -38,22 +38,26 @@ void executeToken(token current)
             else if (strcmp(current.value, "/") == 0) pushInt(left / right);
             else if (strcmp(current.value, "mod") == 0) pushInt(left % right);
         }
-        else if (strcmp(current.type, "dot") == 0)
+        else if (strcmp(current.type, "_dot") == 0)
         {
             printf("cforth: %d\n", popInt());
         }
-        else if (strcmp(current.type, "colon") == 0)
+        else if (strcmp(current.type, "_colon") == 0)
         {
             state = WORD;
             finished = 0;
         }
-        else if (strcmp(current.type, "str") == 0)
+        else if (strcmp(current.type, "_str") == 0)
         {
             state = STR;
             // printf("String set state to %d\n", state);
             printf("cforth: ");
         }
-        else if (strcmp(current.type, "default") == 0)
+        else if (strcmp(current.type, "_dup") == 0)
+        {
+            pushInt(stack[stackptr]);
+        }
+        else if (strcmp(current.type, "_default") == 0)
         {
             for (int i = 0; i < wordidx; i++)
             {
@@ -79,10 +83,10 @@ void executeToken(token current)
         {
             // puts("Exec state");
             // printf("compare %s to if returns %d\n", current.value, strcmp(current.value, "if"));
-            if (strcmp(current.value, "if") == 0)
+            if (strcmp(current.value, "_if") == 0)
             {
                 // puts("Encountered if statement\n");
-                if (popInt() != 0)
+                if (stack[stackptr] != 0)
                 {
                     // puts("Going into if statement");
                     state = IF;
@@ -110,7 +114,7 @@ void executeToken(token current)
             }
             else    // We already gave the word a name, so add the token to the list 
             {
-                if (strcmp(current.type, "semcolon") == 0) // Don't add this to the list, just finish the word up
+                if (strcmp(current.type, "_semcolon") == 0) // Don't add this to the list, just finish the word up
                 {
                     wordidx++;
                     //printf("words list wordidx(%d): %s\n", wordidx - 1, words[wordidx - 1].name);
@@ -146,7 +150,7 @@ void executeToken(token current)
     }
     else if (state == IF)   // Encountered an if token while executing a word and executing up until else clause
     {
-        if (strcmp(current.value, "else") != 0)
+        if (strcmp(current.value, "_else") != 0)
         {
             // printf("Current token %s(%s) isn't else and cond is true\n", current.type, current.value);
             if (state == IF || state == DEF) state = EXEC;
@@ -162,18 +166,18 @@ void executeToken(token current)
     }
     else if (state == SKIP)
     {
-        if (strcmp(current.value, "then") == 0)
+        if (strcmp(current.value, "_then") == 0)
         {
             state = EXEC;
         }
-        else if (strcmp(current.value, "else") == 0)
+        else if (strcmp(current.value, "_else") == 0)
         {
             state = ELSE;
         }
     }
     else if (state == ELSE)
     {
-        if (strcmp(current.value, "then") != 0)
+        if (strcmp(current.value, "_then") != 0)
         {
             if (state == ELSE || state == DEF) state = EXEC;
             executeToken(current);
